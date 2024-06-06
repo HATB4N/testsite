@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoSsiangNian</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .article-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .article-img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .article-content {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .author-info {
+            font-style: italic;
+            color: #888;
+        }
+        header {
+            background-color: #ffffff;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        header img {
+            max-height: 80px;
+            max-width: 100%;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 10px 0;
+            position: relative;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            position: relative;
+        }
+        nav a:hover {
+            background-color: #000000;
+            border-radius: 5px;
+        }
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000000;
+            color: rgb(255, 255, 255);
+            padding: 5px;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        nav a:hover .tooltip {
+            display: block;
+        }
+
+        footer {
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+        }
+        .footer-logo {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        .comment-form {
+            margin-top: 40px;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+        .comment-form button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .comments {
+            margin-top: 40px;
+        }
+        .comments ul {
+            list-style: none;
+            padding: 0;
+        }
+        .comments li {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .comment-info {
+            color: #888;
+            font-size: 14px;
+        }
+        .comment-actions {
+            margin-top: 10px;
+        }
+        .comment-actions a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='tslogo.png') }}" alt="Logo">
+    </header>
+    <nav>
+        <a href="/">SSAMslazenger
+            <div class="tooltip">메인 페이지</div>
+        </a>
+        <a href="/ct">CyberToilet
+            <div class="tooltip">익명 커뮤니티</div>
+        </a>
+        <a href="/ts">TechnoSsiangNian
+            <div class="tooltip">뉴스 커뮤니티</div>
+        </a>
+    </nav>
+    <div class="container">
+        <h1 class="article-title">{{ article.title }}</h1>
+        <p class="author-info">글싼이: {{ article.author_ip }} | {{ article.time.strftime('%Y-%m-%d %H:%M:%S') }} | 조회수: {{ article.view_count }}</p>
+        {% if article.image_path %}
+        <img class="article-img" src="{{ url_for('uploaded_file', filename=article.id) }}.png" alt="News Image">
+        {% endif %}
+        <p class="article-content">{{ article.content }}</p>
+    </div>
+
+    <div class="container comment-form">
+        <h2>댓글 작성하기</h2>
+        <form id="commentForm" action="{{ url_for('ts_comment_post', article_id=article.id) }}" method="POST">
+            <textarea id="comment" name="comment" rows="4" placeholder="댓글을 입력하세요"></textarea><br>
+            <button type="submit">작성하기</button>
+        </form>
+    </div>
+
+    <div class="container comments">
+        <h2>댓글 목록</h2>
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    <p>{{ comment.text }}</p>
+                    <div class="comment-info">작성자: {{ comment.ip }} | {{ comment.time.strftime('%Y-%m-%d %H:%M:%S')}}</div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <footer>
+        <img src="{{ url_for('static', filename='sclogo.png') }}" alt="Footer Logo" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc3logo.png') }}" alt="Footer Logo 2" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc2logo.png') }}" alt="Footer Logo 3" class="footer-logo">
+        <p>TechnoSsiangNian은 보은고등학교와 아무런 관련이 없습니다.</p>
+        <p>TechnoSsiangNian의 모든 게시물은 운영자의 의견을 대변하지 않습니다.</p>
+    </footer>
+</body>
+</html>

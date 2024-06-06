@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechnoSsiangNian</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            resize: none; /* Prevent textarea from being resized by user */
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        header {
+            background-color: #ffffff;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        header img {
+            max-height: 80px;
+            max-width: 100%;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 10px 0;
+            position: relative;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            position: relative;
+        }
+        nav a:hover {
+            background-color: #000000;
+            border-radius: 5px;
+        }
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000000;
+            color: rgb(255, 255, 255);
+            padding: 5px;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        nav a:hover .tooltip {
+            display: block;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        footer {
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+        }
+        .footer-logo {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='tslogo.png') }}" alt="Logo">
+    </header>
+    <nav>
+        <a href="/">SSAMslazenger
+            <div class="tooltip">메인 페이지</div>
+        </a>
+        <a href="/ct">CyberToilet
+            <div class="tooltip">익명 커뮤니티</div>
+        </a>
+        <a href="/ts">TechnoSsiangNian
+            <div class="tooltip">뉴스 커뮤니티</div>
+        </a>
+    </nav>>
+    <div class="content">
+        <h1>Write News</h1>
+        <form action="/ts/write" method="post" enctype="multipart/form-data">
+            <label for="title">Title:</label><br>
+            <input type="text" id="title" name="title" required><br>
+            <label for="content">Content:</label><br>
+            <textarea id="content" name="content" rows="6" required></textarea><br>
+            <label for="image">Image:</label><br>
+            <input type="file" id="image" name="image"><br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <footer>
+        <img src="{{ url_for('static', filename='sclogo.png') }}" alt="Footer Logo" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc3logo.png') }}" alt="Footer Logo 2" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc2logo.png') }}" alt="Footer Logo 3" class="footer-logo">
+        <p>TechnoSsiangNian은 보은고등학교와 아무런 관련이 없습니다.</p>
+        <p>TechnoSsiangNian의 모든 게시물은 운영자의 의견을 대변하지 않습니다.</p>
+    </footer>
+</body>
+</html>

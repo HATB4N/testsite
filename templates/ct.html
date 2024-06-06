@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberToilet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #ffffff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        header img {
+            max-height: 80px;
+            max-width: 100%;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 10px 0;
+            position: relative;
+            margin-bottom: -20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            position: relative;
+        }
+        nav a:hover {
+            background-color: #000000;
+            border-radius: 5px;
+        }
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000000;
+            color: rgb(255, 255, 255);
+            padding: 5px;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        nav a:hover .tooltip {
+            display: block;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #d50100;
+            margin-bottom: 20px;
+        }
+        .ip-address {
+            font-size: 1.2em;
+            color: #555;
+        }
+        .message-board {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .message-board form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .message-board textarea {
+            width: calc(100% - 40px);
+            height: 100px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            resize: none;
+        }
+        .message-board button {
+            padding: 10px 20px;
+            background-color: #d50100;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .message-board button:hover {
+            background-color: #a40000;
+        }
+        .messages {
+            text-align: left;
+        }
+        .message {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .message .ip {
+            color: #777;
+            font-size: 0.9em;
+        }
+        .comment {
+            padding-left: 20px;
+            border-left: 2px solid #d50100;
+            margin-top: 10px;
+        }
+        .comments-container textarea {
+            height: 35px;
+        }
+        footer {
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+        }
+        .footer-logo {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        .comments-container form {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                margin-top: 20px;
+                padding: 10px;
+            }
+            .message-board textarea,
+            .comments-container textarea {
+                width: calc(100% - 20px);
+            }
+        }
+        @media (max-width: 480px) {
+            .message-board button {
+                padding: 8px 16px;
+            }
+            .footer-logo {
+                max-width: 80px;
+            }
+        }
+    </style>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/png">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='ctlogo.png') }}" alt="Logo">
+    </header>
+    <nav>
+        <a href="/">SSAMslazenger
+            <div class="tooltip">메인 페이지</div>
+        </a>
+        <a href="/ct">CyberToilet
+            <div class="tooltip">익명 커뮤니티</div>
+        </a>
+        <a href="/ts">TechnoSsiangNian
+            <div class="tooltip">뉴스 커뮤니티</div>
+        </a>
+    </nav>
+    <div class="container">
+        <h1>CyberToilet은 완벽한 익명성을 지향합니다.</h1>
+        <p class="ip-address">니 아이피: {{ ip }}</p>
+
+        <div class="message-board">
+            <h2>글싸기</h2>
+            <form action="/ct/post" method="post">
+                <textarea name="message" placeholder="이곳에 글을 싸세요." style="resize: none;"></textarea>
+                <button type="submit">글싸기</button>
+            </form>
+
+            <div class="messages">
+                <h3>최근 글</h3>
+                {% for post in posts %}
+                    <div class="message">
+                        <p>{{ post.text }}</p>
+                        <p class="ip">작성자: {{ post.ip }} | {{  post.time.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        <button class="toggle-comments">댓글 작성</button>
+                        <div class="comments-container">
+                            <div class="comments" style="display: block;">
+                                {% for comment in post.post_comments %}
+                                    <div class="comment">
+                                        <p>{{ comment.text }}</p>
+                                        <p class="ip">작성자: {{ comment.ip }} | {{ comment.time.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <form action="/ct/comment/{{ post.id }}" method="post">
+                                <textarea name="comment" placeholder="댓글을 싸주세요." style="resize: none;"></textarea>
+                                <button type="submit">댓글 올리기</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <img src="{{ url_for('static', filename='sclogo.png') }}" alt="Footer Logo" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc3logo.png') }}" alt="Footer Logo 2" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc2logo.png') }}" alt="Footer Logo 3" class="footer-logo">
+        <p>CyberToilet은 보은고등학교와 아무런 관련이 없습니다.</p>
+        <p>CyberToilet의 모든 게시물은 운영자의 의견을 대변하지 않습니다.</p>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var toggleButtons = document.querySelectorAll(".toggle-comments");
+            toggleButtons.forEach(function(button) {
+                button.addEventListener("click", function() {
+                    var form = this.nextElementSibling.querySelector("form");
+                    if (form.style.display === "none" || form.style.display === "") {
+                        form.style.display = "block";
+                    } else {
+                        form.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

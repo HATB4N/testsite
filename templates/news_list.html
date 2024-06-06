@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News List</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .content-wrapper {
+        max-width: 1200px; /* 최대 너비 설정 */
+        margin: 0 auto; /* 가운데 정렬 */
+        padding: 20px;
+        background-color: #ffffff;
+        }
+        .article-list {
+            list-style-type: none;
+            padding: 20px;
+        }
+        .article-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            flex: 1;
+        }
+
+        .inf {
+            margin-left: 10px;
+        }
+
+        header {
+            background-color: #ffffff;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        header img {
+            max-height: 80px;
+            max-width: 100%;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 10px 0;
+            position: relative;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            position: relative;
+        }
+        nav a:hover {
+            background-color: #000000;
+            border-radius: 5px;
+        }
+        .tooltip {
+            display: none;
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #000000;
+            color: rgb(255, 255, 255);
+            padding: 5px;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        nav a:hover .tooltip {
+            display: block;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        footer {
+            margin-top: 20px;
+            padding: 10px 0;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+        }
+        .footer-logo {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        .write-news-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .write-news-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='tslogo.png') }}" alt="Logo">
+    </header>
+    <nav>
+        <a href="/">SSAMslazenger
+            <div class="tooltip">메인 페이지</div>
+        </a>
+        <a href="/ct">CyberToilet
+            <div class="tooltip">익명 커뮤니티</div>
+        </a>
+        <a href="/ts">TechnoSsiangNian
+            <div class="tooltip">뉴스 커뮤니티</div>
+        </a>
+    </nav>
+    <div class="content-wrapper">
+        <div class="write-news-box">
+            <h1>News List</h1>
+            <button class="write-news-button" onclick="window.location.href='{{ url_for('write_news') }}'">Write News</button>
+        </div>
+        
+        <ul class="article-list">
+            {% for article in articles %}
+            <li>
+                <div class="article-box" onclick="goToDetailPage('{{ article.id }}')">
+                    <div class="title">{{ article.title }}</div>
+                    <div class="inf">작성자: {{ article.author_ip }} | {{ article.time.strftime('%Y-%m-%d %H:%M:%S') }} | 조회수: {{ article.view_count}}</div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        function goToDetailPage(articleId) {
+            window.location.href = `/ts/${articleId}`;
+        }
+    </script>
+    <footer>
+        <img src="{{ url_for('static', filename='sclogo.png') }}" alt="Footer Logo" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc3logo.png') }}" alt="Footer Logo 2" class="footer-logo">
+        <img src="{{ url_for('static', filename='sc2logo.png') }}" alt="Footer Logo 3" class="footer-logo">
+        <p>TechnoSsiangNian은 보은고등학교와 아무런 관련이 없습니다.</p>
+        <p>TechnoSsiangNian의 모든 게시물은 운영자의 의견을 대변하지 않습니다.</p>
+    </footer>
+</body>
+</html>
