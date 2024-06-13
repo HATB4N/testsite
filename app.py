@@ -30,7 +30,6 @@ db = SQLAlchemy(app)
 kst = timezone('Asia/Seoul')
 
 # Database models
-# Database models
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(45))
@@ -41,6 +40,10 @@ class Post(db.Model):
     def __init__(self, ip, text):
         self.ip = ip
         self.text = text
+        self.time = datetime.now(kst)
+
+    def update(self):
+        self.time = datetime.now(kst)
 
 class PostComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,6 +56,10 @@ class PostComment(db.Model):
         self.ip = ip
         self.text = text
         self.post_id = post_id
+        self.time = datetime.now(kst)
+
+    def update(self):
+        self.time = datetime.now(kst)
 
 class NewsArticle(db.Model):
     __tablename__ = 'news_article'
@@ -69,6 +76,10 @@ class NewsArticle(db.Model):
         self.title = title
         self.content = content
         self.author_ip = author_ip
+        self.time = datetime.now(kst)
+
+    def update(self):
+        self.time = datetime.now(kst)
 
     def __repr__(self):
         return f'<NewsArticle {self.title}>'
@@ -84,6 +95,10 @@ class ArticleComment(db.Model):
         self.ip = ip
         self.text = text
         self.article_id = article_id
+        self.time = datetime.now(kst)
+
+    def update(self):
+        self.time = datetime.now(kst)
 
 
 with app.app_context():
@@ -98,7 +113,7 @@ def get_youtube_videos(api_key, playlist_id):
     request = youtube.playlistItems().list(
         part='snippet',
         playlistId=playlist_id,
-        maxResults=50  # 재생목록의 최대 비디오 수
+        maxResults=500  # 재생목록의 최대 비디오 수
     )
     response = request.execute()
     videos = response['items']
@@ -116,7 +131,7 @@ def index():
     recent_articles = NewsArticle.query.order_by(NewsArticle.time.desc()).limit(5).all()
     recent_posts = Post.query.order_by(Post.id.desc()).limit(5).all()
 
-    return render_template('index.html', ip=user_ip, videos=random_videos, recent_articles=recent_articles, recent_posts=recent_posts)
+    return render_template('index.html', ip=user_ip, videos=random_videos, recent_articles=recent_articles, recent_posts=recent_posts, PLAYLIST_ID = PLAYLIST_ID)
 
 @app.route('/robots.txt')
 def robots():
@@ -187,12 +202,14 @@ def news_detail(article_id):
         article.image_path = f'/uploads/{article_id}.png'
     
     article.view_count += 1
+    article.update()  # Update time on modification
     db.session.commit()
 
     # 해당 기사에 대한 댓글도 가져옵니다.
     comments = ArticleComment.query.filter_by(article_id=article_id).order_by(ArticleComment.id.desc()).all()
 
     return render_template('news_detail.html', article=article, comments=comments)
+
 
 
 @app.route('/upload', methods=['POST'])
